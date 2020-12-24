@@ -28,99 +28,93 @@
 </div>
 
 <script type="text/javascript">
-	function init(){
-		return {
-			dataList: [],
-			inputValue: "",
-			tempValue: "",
-			dataCompany: [],
-			curFocus: "",
-			newDiv: "",
-			divStr: "",
-			element: "",
-			cur: ",",
-			getData: function(e){
-				if (this.inputValue.length == 1 &&
-					this.tempValue != this.inputValue ){
-						this.tempValue = this.inputValue
-						this.dataFetch("{{url_for('.api_page')}}"+"?"+this.inputValue.toUpperCase())
-						.then((data) => {
-							this.dataList = data;
-						});
-													}
-					this.element = e.target
-					console.log(e.keyCode)
-					this.closeAllLists();
-			        if (!this.inputValue) { return false;}
-			        this.curFocus = -1;
-			        this.newDiw = document.createElement("DIV");
-			        this.newDiw.setAttribute("id", "13-autocomplete-list");
-			        this.newDiw.setAttribute("class", "autocomplete-items");
-			        this.element.parentNode.appendChild(this.newDiw);
-					for(item in this.dataList){
-						if(item.substr(0, this.inputValue.length) == this.inputValue.toUpperCase()){
-							this.divStr = document.createElement("DIV");
-							this.divStr.innerHTML = "<strong>" + item.substr(0, this.inputValue.length)+ "</strong>";
-							this.divStr.innerHTML += item.substr(this.inputValue.length);
-							this.divStr.innerHTML += "<elementut type='hidden' value='" + item + "'>";
-							this.divStr.addEventListener("click", function(e) {
-								this.element.value = this.getElementsByTagName("input")[0].value;
-								this.closeAllLists();
-							});
-							this.newDiw.appendChild(this.divStr);
-						}
-					}
-					if (this.newDiv)
-					this.cur = this.newDiv.getElementsByTagName("div");
-					if (e.keyCode == 40) {this.addActive();}
-					else if (e.keyCode == 38) {
-						  this.curFocus--;
-						  this.addActive();
-						}
-					else if (e.keyCode == 13) {
-						  e.preventDefault();
-					if (this.curFocus > -1) {
-							if (this.cur) this.cur[this.curFocus].click();
-						}}
-			},
-			 addActive: function (x) {
-			  if (!this.cur) return false;
-			  this.removeActive();
-			  if (this.curFocus >= this.cur.length) this.curFocus = 0;
-			  if (this.curFocus < 0) this.curFocus = (this.cur.length - 1);
+function init(){ return {
+	dataList: [],
+	inputValue: "",
+	tempValue: "",
+	dataCompany: [],
+	curFocus: "",
+	newDiv: "",
+	divStr: "",
+	element: "",
+	cur: ",",
+	getData: function(e){
+		if (this.inputValue.length == 1 && this.tempValue != this.inputValue ){
+			this.tempValue = this.inputValue
+			this.dataFetch("{{url_for('.api_page')}}"+"?"+this.inputValue.toUpperCase())
+				.then((data) => {
+					this.dataList = data }) }
+		this.element = e.target
+	    if (!this.inputValue) { return}
+	        this.curFocus = -1
+	        this.newDiw = document.createElement("DIV")
+	        this.newDiw.setAttribute("id", "13-autocomplete-list") 
+	        this.newDiw.setAttribute("class", "autocomplete-items")
+	        this.element.parentNode.appendChild(this.newDiw)
+			for(item in this.dataList){
+				if(item.substr(0, this.inputValue.length) == this.inputValue.toUpperCase()){
+					this.divStr = document.createElement("DIV")
+					this.divStr.innerHTML = "<strong>" + item.substr(0, this.inputValue.length)+ "</strong>"
+					this.divStr.innerHTML += item.substr(this.inputValue.length)
+					this.divStr.innerHTML += "<elementut type='hidden' value='" + item + "'>"
+					this.divStr.addEventListener("click", function(e) {
+						this.element.value = this.getElementsByTagName("input")[0].value
+						this.closeAllLists()
+					})
+					this.newDiw.appendChild(this.divStr)
+				}
+			}
+			if (this.newDiv)
+			this.cur = this.newDiv.getElementsByTagName("div")
+			if (e.keyCode == 40) {this.addActive() }
+			else if (e.keyCode == 38) {
+				  this.curFocus--
+				  this.addActive()
+				}
+			else if (e.keyCode == 13) {
+				  e.preventDefault()
+			if (this.curFocus > -1) {
+					if (this.cur) this.cur[this.curFocus].click()
+				}}
+	},
+		 addActive: function (x) {
+		  if (!this.cur) return false
+		  this.removeActive()
+		  if (this.curFocus >= this.cur.length) this.curFocus = 0
+		  if (this.curFocus < 0) this.curFocus = (this.cur.length - 1)
 
-			  this.cur[this.curFocus].classList.add("autocomplete-active");
-		  },
-			removeActive: function () {
-			  for (var i = 0; i < this.cur.length; i++) {
-				this.cur[i].classList.remove("autocomplete-active");
-			  }
-		  },
-			closeAllLists: function(elmnt) {
-		      let el = document.getElementsByClassName("autocomplete-items");
-		      for (var i = 0; i < el.length; i++) {
-		        if (elmnt != el[i] && elmnt != this.element) {
-		        el[i].parentNode.removeChild(el[i]);
-		      }
-		    }
+		  this.cur[this.curFocus].classList.add("autocomplete-active")
+	  },
+		removeActive: function () {
+		  for (var i = 0  i < this.cur.length  i++) {
+			this.cur[i].classList.remove("autocomplete-active")
+		  }
+	  },
+		closeAllLists: function(elmnt) {
+	      let el = document.getElementsByClassName("autocomplete-items")
+	      for (var i = 0  i < el.length  i++) {
+	        if (elmnt != el[i] && elmnt != this.element) {
+	        el[i].parentNode.removeChild(el[i])
+	      }
+	    }
+	},
+		getCompany: function(){
+			this.dataFetch("{{url_for('.api_company')}}"+"?"+this.inputValue.toUpperCase())
+			.then((data)=>{
+				this.dataCompany = Object.entries(data)
+			})
 		},
-			getCompany: function(){
-				this.dataFetch("{{url_for('.api_company')}}"+"?"+this.inputValue.toUpperCase())
-				.then((data)=>{
-					this.dataCompany = Object.entries(data);
-				})
-			},
-			dataFetch: function(url) {
-				return fetch(url)
-				.then((response) => {
-					return response.json();
-				})
-			},
-			dataText: function(item){
-				return item[0]+": "+item[1]
-			},
-		}
+		dataFetch: function(url) {
+			return fetch(url)
+			.then((response) => {
+				return response.json()
+			})
+		},
+		dataText: function(item){
+			return item[0]+": "+item[1]
+		},
 	}
+}
 
 
 </script>
