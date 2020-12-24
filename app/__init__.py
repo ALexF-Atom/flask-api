@@ -14,12 +14,15 @@ class RedisClient:
         self.db = db
 
     def __enter__(self):
-        self.client = redis.Redis(host=self.host, port=self.port, db=self.db,
-                                  encoding='utf-8')
-        return self.client
+        return self._get_client()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.client.close()
+
+    def _get_client(self):
+        self.client = redis.Redis(host=self.host, port=self.port, db=self.db,
+                                  encoding='utf-8')
+        return self.client
 
 
 blueprints = [index, ]
