@@ -10,22 +10,26 @@
 	<title>{{title}}</title>
 </head>
 <body>
-	<h1>{{message}}</h1>
 
 
 <div x-data="init()">
-	<form action="" autocomplete="off">
-		<input @keyup="getData" list="datalist" x-model="inputValue">
-		<button class="btn btn-primary" type="button" @click="getCompany">Ok</button>
-	</form>
 	<div class="container justify-center">
-		<template x-for="data in dataCompany" :key="data">
-			<p x-text="data"></p>
-		</template>
+		<h1>{{message}}</h1>
+		<form action="" autocomplete="off">
+			<input @keyup="getData" list="datalist" x-model="inputValue">
+			<button class="btn btn-primary" type="button" @click="getCompany">Ok</button>
+		</form>
+		<div style="display: inline;">
+			<template x-for="key in dataCompany" :key="key">
+				<p x-text="key"></p>
+				<p x-text="value"></p>
+			</template>
+		</div>
 	</div>
 </div>
 
 <script type="text/javascript">
+var dataCompany;
 	function init(){
 		return {
 			dataFrame: [],
@@ -44,7 +48,9 @@
 			getCompany: function(){
 				this.dataFetch("{{url_for('.api_company')}}"+"?"+this.inputValue.toUpperCase())
 				.then((data)=>{
-					this.dataCompany = data;
+					console.log(data)
+					dataCompany = data
+					this.dataCompany = new Map(Object.entries(data));
 				})
 
 			},
