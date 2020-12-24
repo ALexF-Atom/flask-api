@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer="defer">
+	</script>
+	<title>{{title}}</title>
+</head>
+<body>
+	<h1>{{message}}</h1>
+
+
+<div x-data="init()">
+	<form action="" autocomplete="off">
+		<input @keyup="getData" list="datalist" x-model="inputValue">
+		<button class="btn btn-primary" type="button" @click="getCompany">Ok</button>
+	</form>
+	<div class="container justify-center">
+		<template x-for="data in dataCompany" :key="data">
+			<p x-text="data"></p>
+		</template>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function init(){
+		return {
+			dataFrame: [],
+			inputValue: "",
+			tempValue: "",
+			dataCompany: [],
+			getData: function(){
+				if (this.inputValue.length == 1 && this.tempValue != this.inputValue ){
+					this.tempValue = this.inputValue
+					this.dataFetch("{{url_for('.api_page')}}"+"?"+this.inputValue.toUpperCase())
+					.then((data) => {
+						this.dataFrame = data;
+					});
+				}
+			},
+			getCompany: function(){
+				this.dataFetch("{{url_for('.api_company')}}"+"?"+this.inputValue.toUpperCase())
+				.then((data)=>{
+					this.dataCompany = data;
+				})
+
+			},
+			dataFetch: function(url) {
+				return fetch(url)
+				.then((response) => {
+					return response.json();
+				})
+
+			},
+		}
+	}
+</script>
+
+</body>
+</html>
