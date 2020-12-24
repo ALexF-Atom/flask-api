@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 	<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.3.5/dist/alpine.min.js" defer="defer">
 	</script>
 	<title>{{title}}</title>
@@ -13,29 +13,41 @@
 
 
 <div x-data="init()">
-	<div class="container justify-center">
-		<h1>{{message}}</h1>
+	<div class="container mt-5">
+		<div class="row justify-content-center align-items-center">
 		<form class="form form-group" autocomplete="off">
-			<input  x-on:keyup="getData" x-model="inputValue" >
-			<button class="btn btn-primary" type="button" @click="getCompany">Ok</button>
+			<div class="input-group">
+				<input type="text" class="form-control"
+					x-on:keyup="getData" x-model="inputValue" aria-describedby="on2">
+				<div class="input-group-append">
+					<button id="on2" class="btn btn-outline-primary" type="button"
+							@click="getCompany" x-text="'О компании'">
+					</button>
+				</div>
+			</div>
 			<div class="autocomplete-items" id="13-autocomplete-list">
 				<template x-for="(data, index) in dataFrame" :key="index">
-					<div x-text="dataText([index, data])"
-						 @click="inputValue=getIndex($event)"
-						 x-bind:index="index">
-					</div>
+						<div x-html="dataText([index, data])"
+							 @click="inputValue=getIndex($event)"
+							 x-bind:index="index"
+							 x-show="dataVisible(index)">
+						</div>>
 				</template>
 			</div>
 		</form>
 
 		<div x-show="isShowCompany">
-			<button @click="show=!show" x-text="show ? 'Скрыть': 'Показать'"></button>
+			<button @click="show=!show"
+					x-text="show ? 'Скрыть': 'Показать'"
+					class="btn btn-info">
+			</button>
 			<div x-show="show">
 				<template x-for="item in dataCompany" :key="item">
 					<p x-text="dataText(item)"></p>
 				</template>
 			</div>
 		</div>
+	</div>
 	</div>
 </div>
 
@@ -61,8 +73,18 @@ function init(){ return {
 		return fetch(url).then((response) => {return response.json()})
 		},
 	dataText: function(item){
-		return item[0]+": "+item[1]
+		let len = this.inputValue.length
+		let word = item[0]
+		if (word.substr(0, len) == this.inputValue.toUpperCase())
+			word = word.substr(0, len).bold() + word.substr(len)
+		 return word + ": " + item[1]
 		},
+	dataVisible: function(word){
+		let len = this.inputValue.length
+		if (word.substr(0, len) == this.inputValue.toUpperCase())
+			return true
+		return false
+	},
 
 	getData: function(e){
 		if (!this.inputValue) this.dataFrame = []
@@ -72,11 +94,10 @@ function init(){ return {
 			this.dataFetch("{{url_for('.api_page')}}"+"?"+this.inputValue.toUpperCase())
 				.then((data) => { this.dataFrame = new Map(Object.entries(data))})
 			}
+
 		},
 	}
 }
-
-
 </script>
 
 </body>
